@@ -35,6 +35,7 @@ private  var selectedCity = ""
     private var convertLowDegree = 0.0
     private var convertHighDegree = 0.0
     private var isCelsius = true
+    private var isWrongUrl = false
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -111,16 +112,28 @@ private  var selectedCity = ""
     // it'll check if data exist ->set result not exist-> display alert
     private fun request(selected:String){
         CoroutineScope(IO).launch{
-            val data = async {fetchData(selected)}.await()
-            if (data.isNotEmpty()){
-                // set data
-                setResultToUI(data)
-            }else{
-                Log.d("MAIN","something wrong with fetching data")
-                mainAlert()
-                println("the zip code does not exist or wrong")
+            try {
+                val data = async { fetchData(selected) }.await()
+                if (data.isNotEmpty()) {
+                    // set data
+                    setResultToUI(data)
+                } else {
+                    Log.d("MAIN", "something wrong with fetching data")
+                    println("the zip code does not exist or wrong")
+                    isWrongUrl = true
+                    withContext(Main) {
+                        if (isWrongUrl) {
+                            mainAlert()
+                            isWrongUrl = false
+                        }
+                    }
+                }
+            }catch (e: Exception){
+                Log.d("MAIN","the zip code does not exist or wrong")
+
             }
         }
+
     }
 
     //function to request the url and get the respones
