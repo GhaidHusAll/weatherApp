@@ -35,7 +35,6 @@ private  var selectedCity = ""
     private var convertLowDegree = 0.0
     private var convertHighDegree = 0.0
     private var isCelsius = true
-    private var isWrongUrl = false
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -120,12 +119,8 @@ private  var selectedCity = ""
                 } else {
                     Log.d("MAIN", "something wrong with fetching data")
                     println("the zip code does not exist or wrong")
-                    isWrongUrl = true
                     withContext(Main) {
-                        if (isWrongUrl) {
                             mainAlert()
-                            isWrongUrl = false
-                        }
                     }
                 }
             }catch (e: Exception){
